@@ -1,0 +1,8 @@
+digraph{
+nodesep = 2;
+splines = "ortho";
+node [ shape=record, style = rounded, fontsize = 30];
+cell_0 [label = "animal"
+ style = filled
+ fillcolor = violet ]
+}
