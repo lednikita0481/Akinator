@@ -12,6 +12,7 @@
 FILE* source_file = NULL;
 FILE* out_file = NULL;
 const int SOURCE_FILE_NAME_LENDTH = 100;
+const int NODE_NAME_LENDTH = 30;
 
 
 void Menu(Tree* tree)
@@ -30,7 +31,8 @@ void Menu(Tree* tree)
     switch (regime)
     {
     case 1:
-        /* code */
+        Guess(tree->root);
+        Tree_Dump(tree);
         break;
     
     default:
@@ -38,7 +40,82 @@ void Menu(Tree* tree)
     }
 }
 
+void Guess(Node* node)
+{
+    printf("Is it %s?\n", node->value);
+    char c = 'a';
 
+    while ((c != 'y') && (c != 'n'))
+    {
+        printf("[y/n]>");
+        scanf("%c", &c);
+    }
+    
+    if (node->left == NULL)
+    {
+        if (c == 'y')
+        {
+            printf("You see! I know everything!\n");
+        }
+        else
+        {
+            printf("Well, to be honest, I don't know everything\n");
+            Naidetsia_Vse___So_Vremenem(node);
+        }
+    }
+
+    else
+    {
+        if (c == 'y')
+        {
+            Guess(node->right);
+        }
+        else
+        {
+            Guess(node->left);
+        }
+    }
+}
+
+void Naidetsia_Vse___So_Vremenem(Node* node)
+{
+    printf("So, what was it?\n>");
+
+    char new_list_node_name[NODE_NAME_LEN] = {};
+    scanf("%s", new_list_node_name);
+
+    printf("And what is difference with %s?\n", node->value);
+
+    char diff_node_name[NODE_NAME_LEN] = {};
+    scanf("%s", diff_node_name);
+    
+    Node* diff_node = NodeCtor(diff_node_name, node->parent);
+    if (node->parent->left == node) node->parent->left = diff_node;
+    else node->parent->right = diff_node;
+    Node* new_list_node = NodeCtor(new_list_node_name, diff_node);
+    node->parent = diff_node;
+
+    printf("%s %s (1) or %s %s (2)?\n", node->value, diff_node_name, new_list_node_name, diff_node_name);
+
+    int list = 0;
+    while ((list < 1) || (list > 2))
+    {
+        printf("[1/2]\n>");
+        scanf("%d", &list);
+    }
+
+    if (list == 1)
+    {
+        diff_node->right = node;
+        diff_node->left = new_list_node;
+    }
+    else
+    {
+        diff_node->left = node;
+        diff_node->right = new_list_node;
+    }
+
+}
 
 
 int File_Size(FILE *stream)
@@ -240,6 +317,8 @@ int main()
     Tree tree = {};
 
     Akinator_Tree_Ctor(&tree, &text);
+
+    Menu(&tree);
 
     Out_Base(0, tree.root);
 

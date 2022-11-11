@@ -71,7 +71,9 @@ const int NODE_NAME_LEN = 50;
     #define source_file_name "source.txt"
 //#endif
 
-
+void Menu(Tree* tree);
+void Guess(Node* node);
+void Naidetsia_Vse___So_Vremenem(Node* node);
 int File_Size(FILE *stream);
 void Distinguish_Strings(Tree_Text* text);
 void Open_Source_File();

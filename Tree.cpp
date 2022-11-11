@@ -87,11 +87,16 @@ void Delete_Node(Tree* tree, Node* node)
 
 void Recursive_Node_Dump(Node* node)
 {
-    char* color;
-    if (node->left == NULL && node->right == NULL) color = "green";
-    else color = "blue";
+    char* color = NULL;
+    char* edge_color = NULL;
+    if (node->left == NULL && node->right == NULL) color = "darkolivegreen1";
+    else  color = "cyan1";
+
+    if (node->parent->left == node) edge_color = "firebrick4";
+    else edge_color = "darkgreen";
+
     DUMP("cell_%d [label = \"%s\"\n style = filled\n fillcolor = %s \n]\n", node->cell_num, node->value, color);
-    DUMP("cell_%d->cell_%d\n", node->parent->cell_num, node->cell_num);
+    DUMP("cell_%d->cell_%d[color = %s]\n", node->parent->cell_num, node->cell_num, edge_color);
 
     if (node->left != NULL) Recursive_Node_Dump(node->left);
     if (node->right != NULL) Recursive_Node_Dump(node->right);
@@ -109,14 +114,14 @@ void Tree_Dump(Tree* tree)
     DUMP("cell_0 [label = \"%s\"\n style = filled\n fillcolor = violet ]\n", tree->root->value);
 
     
-    //if (tree->root->left != NULL) Recursive_Node_Dump(tree->root->left);
-    //if (tree->root->right != NULL) Recursive_Node_Dump(tree->root->right);
+    if (tree->root->left != NULL) Recursive_Node_Dump(tree->root->left);
+    if (tree->root->right != NULL) Recursive_Node_Dump(tree->root->right);
 
     DUMP("}");
 
     fclose(dump_file);
 
-    char command[50] = "dot -Tpng debug\\dump.dot -Gcharset=latin1 -o ";
+    char command[100] = "dot -Tpng debug\\dump.dot -Gcharset=latin1 -o ";
     char name[20] = "debug\\dump";
     char num[10] = "";
 
