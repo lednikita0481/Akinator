@@ -1,0 +1,57 @@
+[
+    ?animal?
+    [
+        ?black?
+        [
+            `Drakosha`
+        ]
+        [
+            `Poltorashka`
+        ]
+    ]
+    [
+        ?mathematics?
+        [
+            ?lector?
+            [
+                ?loves cats?
+                [
+                    ?loves word catarsis?
+                    [
+                        `Raigorodskiy`
+                    ]
+                    [
+                        `Chubarov`
+                    ]
+                ]
+                [
+                    `Znamenskaya`
+                ]
+            ]
+            [
+                ?reads angem?
+                [
+                    `Saulin`
+                ]
+                [
+                    ?Phisicist?
+                    [
+                        `Uskov`
+                    ]
+                    [
+                        `Ogarkov`
+                    ]
+                ]
+            ]
+        ]
+        [
+            ?Proger?
+            [
+                `Ded`
+            ]
+            [
+                `Ovchinkin`
+            ]
+        ]
+    ]
+]

@@ -74,8 +74,12 @@ const int NODE_NAME_LEN = 50;
 
 int File_Size(FILE *stream);
 void Distinguish_Strings(Tree_Text* text);
+void Open_Source_File();
+void Open_Output_File();
 void Akinator_Tree_Ctor(Tree* tree, Tree_Text* text);
 void Add_Nodes_to_Acinator_Tree(Tree* tree, Tree_Text* text, Node* node, int* line);
+void Exit_Bad_Tree(int line);
+void Out_Base(int tabs, Node* node);
 
 
 void TreeCtor(Tree* tree, char* root_node_value);
