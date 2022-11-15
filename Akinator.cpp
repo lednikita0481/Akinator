@@ -8,6 +8,8 @@
 
 //#include "Tree.h"
 #include "Akinator.h"
+#include "config.h"
+#include "stack.h"
 
 FILE* source_file = NULL;
 FILE* out_file = NULL;
@@ -22,18 +24,34 @@ void Menu(Tree* tree)
             "1. guessing \n2. Find definition \n3. Comparison \n4. Tree output as a png \n5.Out\n");
 
     int regime = -1;
+    int g = 0;
     while ((regime < 1) || (regime > 5))
     {
         printf("What are we going to do?\n>");
-        scanf("%d", &regime);
+        g = scanf("%d", &regime);
+        if (g == 0) getchar();
     }
+    getchar();
 
     switch (regime)
     {
     case 1:
+    {
         Guess(tree->root);
         Tree_Dump(tree);
         break;
+    }
+
+    case 2:
+    {
+        printf("Whose definition I need to say?\n");
+        char find_node_name[NODE_NAME_LENDTH] = {};
+        Get_name(find_node_name);
+        Node* find_node = Find_Node(tree->root, find_node_name);
+        if (find_node == NULL) printf("Sorry, I don't now it\n");
+        else Definition(find_node, tree);
+        break;
+    }
     
     default:
         break;
@@ -49,6 +67,7 @@ void Guess(Node* node)
     {
         printf("[y/n]>");
         scanf("%c", &c);
+        getchar();
     }
     
     if (node->left == NULL)
@@ -66,14 +85,8 @@ void Guess(Node* node)
 
     else
     {
-        if (c == 'y')
-        {
-            Guess(node->right);
-        }
-        else
-        {
-            Guess(node->left);
-        }
+        if (c == 'y') Guess(node->right);
+        else Guess(node->left);
     }
 }
 
@@ -81,13 +94,13 @@ void Naidetsia_Vse___So_Vremenem(Node* node)
 {
     printf("So, what was it?\n>");
 
-    char new_list_node_name[NODE_NAME_LEN] = {};
-    scanf("%s", new_list_node_name);
+    char new_list_node_name[NODE_NAME_LENDTH] = {};
+    Get_name(new_list_node_name);
 
     printf("And what is difference with %s?\n", node->value);
 
     char diff_node_name[NODE_NAME_LEN] = {};
-    scanf("%s", diff_node_name);
+    Get_name(diff_node_name);
     
     Node* diff_node = NodeCtor(diff_node_name, node->parent);
     if (node->parent->left == node) node->parent->left = diff_node;
@@ -117,6 +130,68 @@ void Naidetsia_Vse___So_Vremenem(Node* node)
 
 }
 
+void Get_name(char* s)
+{
+    printf("I'm in get name\n");
+    int i = 0;
+    char a = getchar();
+    printf("%c\n", a);
+    if (a == '\n') a = getchar();
+    while ((a != '\n') && (a != '\0') && (i < NODE_NAME_LENDTH))
+    {
+        printf("%c\n", a);
+        s[i] = a;
+        a = getchar();
+        i++;
+    }
+    printf("I'm here\n");
+    
+}
+
+Node* Find_Node(Node* node, char* s)
+{
+    printf("I'm trying to find node. Now value is %s\n", node->value);
+    if (node->left == NULL)
+    {
+        if (strcmp(s, node->value) == 0) return node;
+        else return NULL;
+    }
+
+    else
+    {
+        Node* ret_node = Find_Node(node->left, s);
+        if (ret_node == NULL) ret_node = Find_Node(node->right, s);
+        return ret_node;
+    }
+}
+
+void Definition(Node* node, Tree* tree)
+{
+    printf("%s is ", node->value);
+    Stack stk = {};
+    StackCtor(&stk, 5);
+
+    char* s = "not";
+
+    while (node != tree->root)
+    {
+        StackPush(&stk, node->parent->value);
+        if (node->parent->left == node) StackPush(&stk, s);
+        node = node->parent;
+    }
+    //StackPush(&stk, node->value);
+    
+    int gg = stk.size;
+    for (int i = 0; i < gg; i++)
+    {
+        char* print = StackPop(&stk);
+        printf("%s", print);
+        if (print == s) printf(" ");
+        else printf(", ");
+    }
+
+    printf("\n");
+}
 
 int File_Size(FILE *stream)
 {
@@ -136,7 +211,6 @@ void Distinguish_Strings(Tree_Text* text)
     text->lines[0].line_begin = text->buffer;
     int line = 1;
     int i = 0;
-    printf("We have %d symbols\n\n\n", text->file_size);
     while(i < text->file_size)
     {
         if (text->buffer[i] == '\n')
@@ -146,7 +220,6 @@ void Distinguish_Strings(Tree_Text* text)
             text->buffer[i-1] = '\0';
             while ((i < text->file_size) && (text->buffer[i] == '\n' || text->buffer[i] == '\t' || text->buffer[i] == ' ')) 
             {
-                printf("%d\n", i);
                 i++;
             }
             text->lines[line].line_begin = text->buffer + i;
@@ -155,12 +228,13 @@ void Distinguish_Strings(Tree_Text* text)
         i++;
     }
     text->lines[line-1].lenth = text->buffer + i - text->lines[line-1].line_begin;
-
+    /*
     for (int j = 0; j < text->lines_amount; j++)
     {
         printf(text->lines[j].line_begin);
         printf("    lenth = %d\n", text->lines[j].lenth);
     }
+    */
 }
 
 
@@ -183,18 +257,18 @@ void Open_Output_File()
 
 void Akinator_Tree_Ctor(Tree* tree, Tree_Text* text)
 {
+    printf("Wait a bit. Openning tha akinator base\n");
     int line = 0;
     if (text->lines[line].line_begin[0] == '[') line++;
 
     char root_value[text->lines[line].lenth] = {};
     strncpy(root_value, text->lines[line].line_begin + 1, text->lines[line].lenth - 2);
-    TreeCtor(tree, root_value); printf("HEPL\n");
-    printf("HEPL\n");
+    TreeCtor(tree, root_value);
     line++;
 
-    printf("I'm here\n");
-
     Add_Nodes_to_Acinator_Tree(tree, text, tree->root, &line);
+
+    printf("I have finished! Thanks for waiting.\n");
 }
 
 void Add_Nodes_to_Acinator_Tree(Tree* tree, Tree_Text* text, Node* node, int* line)
@@ -283,7 +357,6 @@ int main()
     setlocale(LC_ALL, "Russian");
 
     Open_Source_File();
-    Open_Output_File();
     Tree_Text text = {};
 
     text.file_size = File_Size(source_file);
@@ -294,9 +367,6 @@ int main()
     text.file_size = fread(text.buffer, sizeof(char), text.file_size, source_file);
 
     fclose(source_file);
-
-    printf("%s", text.buffer);
-    printf("\n\n\n\n\n\n");
 
     int i = 0;
     while(i < text.file_size)
@@ -310,7 +380,6 @@ int main()
         i++;
     }
     text.lines_amount++;
-    printf("%d\n", text.lines_amount);
 
     Distinguish_Strings(&text);
 
@@ -320,6 +389,7 @@ int main()
 
     Menu(&tree);
 
+    Open_Output_File();
     Out_Base(0, tree.root);
 
     return 0;

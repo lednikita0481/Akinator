@@ -15,11 +15,9 @@ const char* dump_file_name = "debug\\dump.dot";
 
 void TreeCtor(Tree* tree, char* root_node_value)
 {
-    printf("I'm in TreeCtor\n");
     tree->root = NodeCtor(root_node_value);
     tree->size = 1;
     Tree_Dump(tree);
-    printf("I've finished TreeCtor\n");
 }
 
 Node* NodeCtor(char* value, Node* parent, Node* left, Node* right)
@@ -66,7 +64,7 @@ void Insert_Node(Tree* tree, Node* node, Child_Num child, char* value)
     }
 
     tree->size++;
-    Tree_Dump(tree);
+    //Tree_Dump(tree);
 }
 
 void Delete_Node(Tree* tree, Node* node)
@@ -104,8 +102,7 @@ void Recursive_Node_Dump(Node* node)
 
 void Tree_Dump(Tree* tree)
 {
-    dump_file = fopen(dump_file_name, "w"); 
-    printf("fgfdgdfgdfgdfgdfgdfgdfgdfgdfgdfgdgfdgdfg\n");                            
+    dump_file = fopen(dump_file_name, "w");                            
     DUMP("digraph{\n");                                                 
     DUMP("nodesep = 2;\n");                                             
     DUMP("splines = \"ortho\";\n");                                     
@@ -135,8 +132,6 @@ void Tree_Dump(Tree* tree)
     system(command);
 
     Add_To_HTML(name);
-
-    printf("I'm dfghggiojdgrfdg\n");
 }
 
 void Add_To_HTML(char* image)
